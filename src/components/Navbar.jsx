@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Menu, X, Sun, Moon, MessageCircleMore } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
+import { getSettings } from '../utils/api'
 
 function Navbar({ dark, onToggleTheme }) {
   const [open, setOpen] = useState(false)
+  const [wa, setWa] = useState('15551234567')
 
   useEffect(() => {
     if (open) {
@@ -12,6 +14,15 @@ function Navbar({ dark, onToggleTheme }) {
       document.body.style.overflow = ''
     }
   }, [open])
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const s = await getSettings()
+        if (s && s.whatsapp_number) setWa(String(s.whatsapp_number).replace('+', ''))
+      } catch {}
+    })()
+  }, [])
 
   const navItem = (to, label) => (
     <NavLink
@@ -42,6 +53,7 @@ function Navbar({ dark, onToggleTheme }) {
             {navItem('/about', 'About')}
             {navItem('/portfolio', 'Portfolio')}
             {navItem('/contact', 'Contact')}
+            {navItem('/admin', 'Admin')}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -53,7 +65,7 @@ function Navbar({ dark, onToggleTheme }) {
               {dark ? <Sun size={18} /> : <Moon size={18} />}
             </button>
             <a
-              href="https://wa.me/15551234567"
+              href={`https://wa.me/${wa}`}
               target="_blank"
               rel="noreferrer"
               className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-md bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/30 shadow-[0_0_20px_#00E0FF] transition"
@@ -80,6 +92,7 @@ function Navbar({ dark, onToggleTheme }) {
               {navItem('/about', 'About')}
               {navItem('/portfolio', 'Portfolio')}
               {navItem('/contact', 'Contact')}
+              {navItem('/admin', 'Admin')}
             </div>
           </div>
         )}

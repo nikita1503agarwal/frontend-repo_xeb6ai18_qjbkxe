@@ -3,9 +3,23 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import { ServicesGrid, AboutSection } from './components/Sections'
 import Footer from './components/Footer'
+import { getSettings } from './utils/api'
 
 function App() {
   const [dark, setDark] = useState(true)
+  const [settings, setSettings] = useState(null)
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const s = await getSettings()
+        setSettings(s)
+        if (typeof s.theme_default_dark === 'boolean') {
+          setDark(s.theme_default_dark)
+        }
+      } catch {}
+    })()
+  }, [])
 
   useEffect(() => {
     if (dark) {
@@ -31,7 +45,7 @@ function App() {
 
       {/* Floating WhatsApp */}
       <a
-        href="https://wa.me/15551234567"
+        href={`https://wa.me/${settings?.whatsapp_number ? String(settings.whatsapp_number).replace('+','') : '15551234567'}`}
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-6 right-6 rounded-full bg-cyan-500 text-[#0D1B2A] p-4 shadow-[0_0_30px_#00E0FF] hover:shadow-[0_0_45px_#00E0FF] transition"

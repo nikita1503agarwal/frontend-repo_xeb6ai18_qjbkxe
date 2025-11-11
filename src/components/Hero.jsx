@@ -1,18 +1,31 @@
 import Spline from '@splinetool/react-spline'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { getSettings } from '../utils/api'
 
 function GlowButton({ children }) {
   return (
-    <button className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 hover:text-white shadow-[0_0_25px_#00E0FF] hover:shadow-[0_0_35px_#00E0FF] transition-colors">
+    <span className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 hover:text-white shadow-[0_0_25px_#00E0FF] hover:shadow-[0_0_35px_#00E0FF] transition-colors">
       <span className="absolute inset-0 rounded-lg bg-cyan-400/20 blur-xl pointer-events-none" />
       <span className="relative">{children}</span>
       <ArrowRight className="relative transition-transform group-hover:translate-x-1" size={18} />
-    </button>
+    </span>
   )
 }
 
 export default function Hero() {
+  const [settings, setSettings] = useState(null)
+  useEffect(() => {
+    (async () => {
+      try {
+        const s = await getSettings()
+        setSettings(s)
+      } catch {}
+    })()
+  }, [])
+
   return (
     <section className="relative min-h-[88vh] flex items-center">
       <div className="absolute inset-0">
@@ -28,7 +41,7 @@ export default function Hero() {
             transition={{ duration: 0.7 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white"
           >
-            INNOVATE. BUILD. TRANSFORM WITH AXIOM.
+            {settings?.hero_title || 'INNOVATE. BUILD. TRANSFORM WITH AXIOM.'}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -36,7 +49,7 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.1 }}
             className="mt-6 text-lg text-white/80 max-w-2xl"
           >
-            We design smart digital experiences that move businesses forward.
+            {settings?.hero_subtitle || 'We design smart digital experiences that move businesses forward.'}
           </motion.p>
 
           <motion.div
@@ -45,10 +58,10 @@ export default function Hero() {
             transition={{ duration: 1.1, delay: 0.2 }}
             className="mt-10 flex flex-wrap gap-4"
           >
-            <GlowButton>Get Started</GlowButton>
-            <button className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-white/20 text-white/80 hover:text-white hover:bg-white/10 transition">
+            <Link to="/contact"><GlowButton>Get Started</GlowButton></Link>
+            <Link to="/portfolio" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-white/20 text-white/80 hover:text-white hover:bg-white/10 transition">
               View Our Work
-            </button>
+            </Link>
           </motion.div>
         </div>
         <div className="hidden lg:block" />
